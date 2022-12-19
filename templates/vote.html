@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FluLu Vote</title>
+    <script>
+        function vote(option) {
+            //send the data to the server api
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/endpoint/vote", true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                voteId: "{{ voteId }}",
+                option: option
+            }));
+            xhr.onload = function () {
+                var data = this.responseText;
+                if (data == "200")
+                    window.location.href = window.location.href + "/results";
+                else
+                    alert("Error: " + data);
+
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>{{ title }}</h1>
+    <p>{{ description }}</p>
+    <hr>
+    {% for option in options %}
+    <button onclick="vote('{{ option }}');">{{ option }}</button><br>
+    {% endfor %}
+</body>
+
+</html>

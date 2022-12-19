@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FluLu Vote</title>
+    <script>
+        function send() {
+            var title = document.getElementsByName("title")[0].value;
+            var description = document.getElementsByName("description")[0].value;
+            var options = document.getElementsByName("options")[0].value;
+            var publicResults = document.getElementsByName("publicResults")[0].checked;
+            var prpassword = document.getElementsByName("prpassword")[0].value;
+            var showType = document.getElementsByName("showType")[0].value;
+            var zero = document.getElementsByName("zero")[0].checked;
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/create", true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                title: title,
+                description: description,
+                options: options,
+                publicResults: publicResults,
+                prpassword: prpassword,
+                showType: showType,
+                zero: zero
+            }));
+            xhr.onload = function () {
+                var data = this.responseText;
+                alert(window.location.origin + "/" + data);
+                window.location.href = "/" + data;
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <p>Only a api test. please use <a
+            href="https://www.flulu.eu/?install=vote&autostart=c/programs/vote/run.js">FluLu.eu</a>!</p>
+
+    <input type="text" name="title" placeholder="Title">
+    <br>
+    <input type="text" name="description" placeholder="Description">
+    <br>
+    <input type="text" name="options" placeholder="Options (a;b;c)">
+    <br>
+    <input type="checkbox" name="publicResults" checked>
+    <label for="publicResults">Public Results</label>
+    <input type="text" name="prpassword" placeholder="password">
+    <br>
+    <input type="text" name="showType" placeholder="show type (bar, pie, ...)" value="bar">
+    <br>
+    <input type="checkbox" name="zero" checked>
+    <label for="zero">beginn at zero</label>
+    <br>
+
+    <button onclick="send();">Send</button>
+    <hr>
+
+</body>
+
+</html>
