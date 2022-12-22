@@ -88,7 +88,7 @@ def vote():
 def wvote():
     data = request.get_json()
     voteId = data["voteId"]
-    word = data["word"]
+    word = data["word"].lower()
 
     if voteId not in db:
         return "404"
