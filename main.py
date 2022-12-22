@@ -1,12 +1,18 @@
 from flask import Flask, render_template, redirect
 import envs
 from replit import db
-from api import app as userApi
+import api
+import ws
 from flask_cors import CORS
 
 app = Flask(__name__)
-app.register_blueprint(userApi)
+app.register_blueprint(api.app)
+app.register_blueprint(ws.app)
+
+api.ws=ws
+
 CORS(app)
+
 
 @app.route("/")
 def index():
@@ -20,9 +26,16 @@ def vote(voteId):
 
     title = db[voteId]["title"]
     description = db[voteId]["description"]
-    options = db[voteId]["options"]
+    if db[voteId]["type"] != "wordcloud":
+        options = db[voteId]["options"]
+    else:
+        options = "wordcloud"
 
-    return render_template("vote.html", voteId=voteId, title=title, description=description, options=options)
+    return render_template("vote.html",
+                           voteId=voteId,
+                           title=title,
+                           description=description,
+                           options=options)
 
 
 @app.route("/<string:voteId>/results")
@@ -37,8 +50,13 @@ def results(voteId):
     description = db[voteId]["description"]
     options = db[voteId]["options"]
     votes = db[voteId]["votes"]
-    
-    return render_template("results.html", voteId=voteId, title=title, description=description, options=options, votes=votes)
+
+    return render_template("results.html",
+                           voteId=voteId,
+                           title=title,
+                           description=description,
+                           options=options,
+                           votes=votes)
 
 
 @app.route("/<string:voteId>/results/<string:password>")
@@ -67,7 +85,13 @@ def resultsPassword(voteId, password):
         else:
             v[i] = votes[i]
 
-    return render_template("results.html", voteId=voteId, title=title, description=description, options=options, votes=v, cap=cap)
+    return render_template("results.html",
+                           voteId=voteId,
+                           title=title,
+                           description=description,
+                           options=options,
+                           votes=v,
+                           cap=cap)
 
 
 @app.route("/create")
@@ -78,5 +102,4 @@ def create():
 # put flask in debug mode
 app.debug = True
 
-
-app.run("0.0.0.0", 81)
+app.run("0.0.0.0", 80)

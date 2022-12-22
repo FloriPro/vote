@@ -22,6 +22,25 @@
 
             }
         }
+
+        function wordCloud() {
+            var word = document.querySelector("#wordcloudSend").value;
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/endpoint/wordVote", true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({
+                voteId: "{{ voteId }}",
+                word: word
+            }));
+            xhr.onload = function () {
+                var data = this.responseText;
+                //if (data == "200")
+                //    window.location.href = window.location.href + "/results";
+                //else
+                //    alert("Error: " + data);
+
+            }
+        }
     </script>
 </head>
 
@@ -29,9 +48,14 @@
     <h1>{{ title }}</h1>
     <p>{{ description }}</p>
     <hr>
+    {% if options == "wordcloud" %}
+    <input placeholder="Word to add" id="wordcloudSend">
+    <button onclick="wordCloud();">send</button>
+    {% else %}
     {% for option in options %}
     <button onclick="vote('{{ option }}');">{{ option }}</button><br>
     {% endfor %}
+    {% endif %}
 </body>
 
 </html>

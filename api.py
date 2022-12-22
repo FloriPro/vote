@@ -9,15 +9,21 @@ import json
 
 app = Blueprint('clientApi', __name__, template_folder='templates')
 
+ws = None
+
 
 def randomString():
     letters = string.ascii_lowercase
     letters += string.ascii_uppercase
     letters += string.digits
     b = ""
-    while b in ["", "create", "index", "static", "vote", "favicon.ico", "robots.txt"] or b in db:
+    while b in [
+            "", "create", "index", "static", "vote", "favicon.ico",
+            "robots.txt"
+    ] or b in db:
         b = ''.join(random.choice(letters) for i in range(10))
     return b
+
 
 def toNormalDict(o):
     d = {}
@@ -29,11 +35,14 @@ def toNormalDict(o):
         else:
             d[x] = o[x]
     return d
+
+
 def toNormalList(o):
     d = []
     for x in o:
         d.append(x)
     return d
+
 
 def splitEachInArray(array, delimiter):
     newArray = []
@@ -56,6 +65,9 @@ def vote():
     voteId = data["voteId"]
     option = data["option"]
 
+    if db[voteId]["type"] == "wordcloud":
+        return "404"
+
     if voteId not in db:
         return "404"
 
@@ -63,6 +75,39 @@ def vote():
         return "404"
 
     db[voteId]["votes"][option] += 1
+    ws.update(voteId, {
+        "type": "add",
+        "pollType": "chart",
+        "option": option,
+        "id": voteId
+    })
+    return "200"
+
+
+@app.route("/api/endpoint/wordVote", methods=["POST"])
+def wvote():
+    data = request.get_json()
+    voteId = data["voteId"]
+    word = data["word"]
+
+    if voteId not in db:
+        return "404"
+
+    if db[voteId]["type"] != "wordcloud":
+        return "404"
+
+    if word in db[voteId]["taglist"].keys():
+        db[voteId]["taglist"][word] = db[voteId]["taglist"][word] + 1
+    else:
+        db[voteId]["taglist"][word] = 1
+
+    ws.update(
+        voteId, {
+            "pollType": "wordcloud",
+            "id": voteId,
+            "taglist": toNormalDict(db[voteId])["taglist"]
+        })
+
     return "200"
 
 
@@ -98,8 +143,9 @@ def create():
     showType = data["showType"]
     zero = data["zero"]
 
-    options = splitEachInArray(splitEachInArray(
-        splitEachInArray(options.split(" ; "), " ;"), "; "), ";")
+    options = splitEachInArray(
+        splitEachInArray(splitEachInArray(options.split(" ; "), " ;"), "; "),
+        ";")
 
     v = {}
     for x in options:
@@ -113,6 +159,24 @@ def create():
         "publicResults": publicResults,
         "prpassword": prpassword,
         "showType": showType,
-        "zero": zero
+        "zero": zero,
+        "type": "chart"
+    }
+    return rand
+
+
+@app.route("/api/createCloud", methods=["POST"])
+def createCloud():
+    data = request.get_json()
+    title = data["title"]
+    description = data["description"]
+
+    rand = randomString()
+    db[rand] = {
+        "taglist": {},
+        "type": "wordcloud",
+        "publicResults": True,
+        "title": title,
+        "description": description,
     }
     return rand
