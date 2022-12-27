@@ -52,10 +52,10 @@ class Player:
         if id == self.id:
             self.send_message(json.dumps(dat))
             print("update with data: " + str(dat))
-        pass
 
     def handle_close(self):
-        pass
+        if self.id in updaters.keys():
+            updaters[self.id].remove(self)
 
 
 updaters = {}

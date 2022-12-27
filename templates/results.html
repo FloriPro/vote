@@ -3,21 +3,32 @@
 
 <head>
     <title>FluLu Vote</title>
+    <style>
+        body{
+            background: #1d262d;
+            color: lightgrey;
+        }
+        .subtext{
+            color: #898989
+        }
+    </style>
+    <meta name="viewport" content="width=device-width">
 </head>
 
 <body>
-    <h2>Results</h2>
+    <h2 class="subtext">Results</h2>
     <h1>{{ title }}</h1>
     <p>{{ description }}</p>
     <hr>
     {% for option in options %}
     <p><b>{{ option }}</b>: <i>{{ votes[option] }}</i></p>
     {% endfor %}
+    <hr>
 
-    <p>use <a href="https://www.flulu.eu/?install=vote&autostart=c/programs/vote/run.js">FluLu.eu</a> for a better experience</p>    
+    <p class="subtext">use <a href="https://www.flulu.eu/?install=vote&autostart=c/programs/vote/run.js">FluLu.eu</a> for a better experience</p>    
 
     {% if cap %}
-    <p>Votes grater than 3 can't be shown when private in this view please use <a href="https://www.flulu.eu/?install=vote&autostart=c/programs/vote/run.js">FluLu.eu</a> to view all results</p>
+    <p class="subtext">Votes grater than 3 can't be shown when private in this view please use <a href="https://www.flulu.eu/?install=vote&autostart=c/programs/vote/run.js">FluLu.eu</a> to view all results</p>
     {% endif %}
 </body>
 

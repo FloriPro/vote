@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, request
 import envs
 from replit import db
 import api
@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.register_blueprint(api.app)
 app.register_blueprint(ws.app)
 
-api.ws=ws
+api.ws = ws
 
 CORS(app)
 
@@ -23,6 +23,11 @@ def index():
 def vote(voteId):
     if voteId not in db:
         return render_template("404.html")
+
+    #check if user has cookie
+    hasUsedIt = request.cookies.get('_' + voteId)
+    if hasUsedIt != None:
+        return results(voteId)
 
     title = db[voteId]["title"]
     description = db[voteId]["description"]

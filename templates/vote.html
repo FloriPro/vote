@@ -2,7 +2,43 @@
 <html>
 
 <head>
-    <title>FluLu Vote</title>
+    <title>{{ title }} | FluLu Vote</title>
+    <meta content="{{ title }} | FluLu Vote" property="og:title" />
+    <meta content="{{ description }}" property="og:description" />
+    <meta content="https://vote.flulu.eu/{{ voteId }}" property="og:url" />
+    <meta content="#43B581" data-react-helmet="true" name="theme-color" />
+    
+    <style>
+        body{
+            background: #1d262d;
+            color: lightgrey;
+        }
+        *{
+            text-align: center;
+        }
+        #select{
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            flex-direction: row;
+            align-items: stretch;
+        }
+        button {
+            width: 10%;
+            min-height: 100px;
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            min-width: 300px;
+        }
+    </style>
     <script>
         function vote(option) {
             //send the data to the server api
@@ -15,10 +51,13 @@
             }));
             xhr.onload = function () {
                 var data = this.responseText;
-                if (data == "200")
+                if (data == "200"){
                     window.location.href = window.location.href + "/results";
-                else
+                }
+                else{
                     alert("Error: " + data);
+                }
+                setCookie("_{{ voteId }}", "made", 100)
 
             }
         }
@@ -34,28 +73,33 @@
             }));
             xhr.onload = function () {
                 var data = this.responseText;
-                //if (data == "200")
-                //    window.location.href = window.location.href + "/results";
-                //else
-                //    alert("Error: " + data);
-
             }
         }
+
+        function setCookie(cname, cvalue, exdays) {
+          const d = new Date();
+          d.setTime(d.getTime() + (exdays*24*60*60*1000));
+          let expires = "expires="+ d.toUTCString();
+          document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
     </script>
+
+    <meta name="viewport" content="width=device-width">
 </head>
 
 <body>
     <h1>{{ title }}</h1>
     <p>{{ description }}</p>
-    <hr>
-    {% if options == "wordcloud" %}
-    <input placeholder="Word to add" id="wordcloudSend">
-    <button onclick="wordCloud();">send</button>
-    {% else %}
-    {% for option in options %}
-    <button onclick="vote('{{ option }}');">{{ option }}</button><br>
-    {% endfor %}
-    {% endif %}
+    <div id="select">
+        {% if options == "wordcloud" %}
+        <input placeholder="Word to add" id="wordcloudSend">
+        <button onclick="wordCloud();">send</button>
+        {% else %}
+        {% for option in options %}
+        <button onclick="vote('{{ option }}');">{{ option }}</button><br>
+        {% endfor %}
+        {% endif %}
+    </div>
 </body>
 
 </html>

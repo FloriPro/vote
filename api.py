@@ -74,13 +74,21 @@ def vote():
     if option not in db[voteId]["options"]:
         return "404"
 
+    #check cookies, if allready voted
+    hasUsedIt = request.cookies.get('_' + voteId)
+    if hasUsedIt != None:
+        return "400 allready voted!"
+
     db[voteId]["votes"][option] += 1
-    ws.update(voteId, {
-        "type": "add",
-        "pollType": "chart",
-        "option": option,
-        "id": voteId
-    })
+    try:
+        ws.update(voteId, {
+            "type": "add",
+            "pollType": "chart",
+            "option": option,
+            "id": voteId
+        })
+    except:
+        pass
     return "200"
 
 

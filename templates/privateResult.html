@@ -2,6 +2,38 @@
 <html>
 <head>
     <title>FluLu Vote</title>
+    <style>
+        body{
+            background: #1d262d;
+            color: lightgrey;
+        }
+        *{
+            text-align: center;
+        }
+        #select{
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            flex-direction: row;
+            align-items: stretch;
+        }
+        button {
+                background-color: #5c5c5c;
+                border: none;
+                color: white;
+                padding: 3px 3px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                position: fixed;
+                bottom: 0px;
+                left: 0;
+                right: 0;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width">
     <script>
         function view(){
             var password = prompt("Please enter the password");
@@ -9,7 +41,7 @@
         }
     </script>
 </head>
-<body>
-    <h1>Thanks for participating</h1>
+<body style="margin: 0px">
+    <h1 style="background-color: #4CAF50;color:white;padding: 29px;margin: 10px;top: 30%;position: fixed;width: calc(100% - 78px);">Thanks for participating</h1>
     <button onclick="view()">View results (password-protected)</button>
 </html>
